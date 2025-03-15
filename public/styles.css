@@ -1,69 +1,98 @@
-*,
-*::before,
-*::after {
+/* General Reset */
+* {
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
   font-family: Arial, sans-serif;
 }
 
 body {
-  margin: 0;
-  padding: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100vw;
-  height: 100vh;
-  background-color: #f5f5f5;
+  background-color: #f4f4f4;
+  color: #333;
+  text-align: center;
 }
 
-.container {
+/* Navigation Bar */
+nav {
+  background-color: #007bff;
+  padding: 1rem;
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+
+nav a {
+  color: white;
+  text-decoration: none;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: color 0.3s ease-in-out;
+}
+
+nav a:hover {
+  color: #ffdd57;
+}
+
+/* Main Content */
+#app {
+  margin-top: 20px;
+  padding: 20px;
+  max-width: 800px;
+  background: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-left: auto;
+  margin-right: auto;
+  min-height: 300px;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  nav a {
+    font-size: 1rem;
+  }
+
+  #app {
+    width: 90%;
+  }
+}
+
+/* quiz.html style */
+/* .container {
   width: 100%;
   max-width: 600px;
   background-color: white;
   border-radius: 10px;
   padding: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.hide {
-  display: none;
-}
-
-.start-screen {
-  text-align: center;
-}
-
-.start-screen h1 {
-  color: #333;
-  margin-bottom: 20px;
-}
-
+} */
 #quiz-header {
   display: flex;
   flex-direction: column;
   align-items: center;
   margin-bottom: 20px;
 }
-
 #question {
   margin-bottom: 20px;
   text-align: center;
   color: #333;
 }
-
 #progress {
   font-size: 18px;
   color: #666;
   margin-bottom: 20px;
 }
-
 .btn-grid {
   display: grid;
   grid-template-columns: 1fr;
   gap: 10px;
   margin: 20px 0;
 }
-
 button {
   padding: 15px 25px;
   font-size: 18px;
@@ -74,7 +103,6 @@ button {
   cursor: pointer;
   transition: background-color 0.3s;
 }
-
 button:hover {
   background-color: #357abd;
 }
@@ -155,4 +183,8 @@ button:disabled {
     padding: 12px 20px;
     font-size: 16px;
   }
+}
+
+.hide {
+  display: none;
 }
