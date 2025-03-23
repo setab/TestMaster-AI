@@ -5,6 +5,7 @@ const routes = {
   "#signup": "pages/signup.html",
   "#404": "pages/404.html",
 };
+
 // Function to load the page content dynamically
 function loadPage() {
   const path = window.location.hash || ""; // Get the current hash
@@ -14,8 +15,19 @@ function loadPage() {
     .then((response) => response.text())
     .then((html) => {
       document.getElementById("app").innerHTML = html;
+
+      // Remove old script to prevent duplication
+      const oldScript = document.getElementById("quiz-script");
+      if (oldScript) {
+        oldScript.remove();
+      }
+
       if (path === "#quiz") {
-        loadScript();
+        // Dynamically load quiz script
+        const script = document.createElement("script");
+        script.src = "quiz2.js";
+        script.id = "quiz-script"; // Prevent multiple instances
+        document.body.appendChild(script);
       }
     })
     .catch((error) => console.error("Error loading page:", error));
@@ -24,15 +36,3 @@ function loadPage() {
 // Listen for hash changes & initial page load
 window.addEventListener("hashchange", loadPage);
 window.addEventListener("DOMContentLoaded", loadPage);
-// window.addEventListener("hashchange", () => {
-//   quizApp = {};
-// });
-
-function loadScript() {
-  // Check if the script is already added
-  if (!document.querySelector('script[src="main.js"]')) {
-    const script = document.createElement("script");
-    script.src = "main.js";
-    document.body.appendChild(script);
-  }
-}
