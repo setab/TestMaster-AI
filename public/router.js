@@ -8,25 +8,29 @@ const routes = {
 
 // Function to load the page content dynamically
 function loadPage() {
-  const path = window.location.hash || ""; // Get the current hash
-  const page = routes[path] || routes[""]; // Default to home if not found
+  const path = window.location.hash || "";
+  const page = routes[path] || routes[""];
 
   fetch(page)
     .then((response) => response.text())
     .then((html) => {
       document.getElementById("app").innerHTML = html;
 
-      // Remove old script to prevent duplication
-      const oldScript = document.getElementById("quiz-script");
-      if (oldScript) {
-        oldScript.remove();
-      }
-
       if (path === "#quiz") {
-        // Dynamically load quiz script
+        console.log("Quiz page loaded");
+
+        // Remove existing script if it exists
+        const existingScript = document.getElementById("quiz-script");
+        if (existingScript) {
+          existingScript.remove();
+        }
+
+        // Dynamically load the quiz script with cache-busting
         const script = document.createElement("script");
-        script.src = "quiz2.js";
-        script.id = "quiz-script"; // Prevent multiple instances
+        script.src = `quiz.js?t=${Date.now()}`; // Add timestamp to avoid caching
+        script.type = "module";
+        script.id = "quiz-script";
+
         document.body.appendChild(script);
       }
     })

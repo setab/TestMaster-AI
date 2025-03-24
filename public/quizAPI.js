@@ -1,4 +1,5 @@
-const url = "https://opentdb.com/api.php?amount=10";
+// const url = "https://opentdb.com/api.php?amount=10";
+const url = "http://127.0.0.1:5000/quiz";
 
 // Fetching data from the API
 async function fetchQuestions(url) {
@@ -34,6 +35,7 @@ function convertApiResponse(apiResponse) {
 
 async function getFormattedQuizData() {
   const response_data = await fetchQuestions(url);
+  // console.log(response_data.results);
   return convertApiResponse(response_data.results);
 }
 

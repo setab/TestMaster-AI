@@ -1,206 +1,118 @@
-if (!window.quizApp) {
-  window.quizApp = {
-    score: 0,
-    quizData: [],
-    currentQuestionIndex: 0,
-    correctAnswer: null,
-    responseData: [],
+function start() {
+  console.log("quize has start");
 
-    async fetchQuizDataAPI() {
-      const url = "https://opentdb.com/api.php?amount=10";
-      try {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        const data = await response.json();
-        this.responseData = data.results;
-      } catch (error) {
-        console.error(error);
-      }
-    },
+  const quizContainer = document.getElementById("quiz-container");
+  const startButton = document.getElementById("start-button");
+  const startScreen = document.getElementById("start-screen");
+  const questionContainer = document.getElementById("question");
 
-    async startQuiz() {
-      await this.fetchQuizDataAPI();
-      if (this.responseData.length === 0) {
-        console.error("No quiz data available.");
-        return;
-      }
-      this.quizData = convertApiResponse(this.responseData);
-      this.currentQuestionIndex = 0;
-      this.saveState();
-      removeStartScreen();
-      showQuestion();
-    },
+  let QuizData;
+  let questionIndex = 0;
+  let correct_answer = null;
+  let score = 0;
 
-    saveState() {
-      localStorage.setItem(
-        "quizState",
-        JSON.stringify({
-          score: this.score,
-          quizData: this.quizData,
-          currentQuestionIndex: this.currentQuestionIndex,
-          correctAnswer: this.correctAnswer,
-          responseData: this.responseData,
-        })
-      );
-    },
+  (async () => {
+    const response = await fetch("http://127.0.0.1:5000/quiz");
+    QuizData = await response.json(); // Wait until the JSON is fetched and parsed
+    console.log(QuizData); // Log QuizData after it is assigned
 
-    loadState() {
-      const savedState = localStorage.getItem("quizState");
-      if (savedState) {
-        Object.assign(this, JSON.parse(savedState));
-        return true;
-      }
-      return false;
-    },
-
-    resetState() {
-      localStorage.removeItem("quizState");
-      Object.assign(this, {
-        score: 0,
-        quizData: [],
-        currentQuestionIndex: 0,
-        correctAnswer: null,
-        responseData: [],
-      });
-    },
-  };
-}
-
-// ✅ Prevent multiple DOM element declarations
-if (!window.quizElements) {
-  window.quizElements = {
-    startScreen: document.getElementById("start-screen"),
-    startButton: document.getElementById("start-button"),
-    quizContainer: document.getElementById("quiz-container"),
-    question: document.getElementById("question"),
-    questionNumber: document.getElementById("question-number"),
-    answerButtons: document.getElementById("answer-buttons"),
-    scoreContainer: document.getElementById("score-container"),
-    ScoreEl: document.getElementById("score"),
-    restartButton: document.getElementById("restart-button"),
-  };
-}
-
-// ✅ Assign global variables
-const {
-  startScreen,
-  startButton,
-  quizContainer,
-  question,
-  questionNumber,
-  answerButtons,
-  scoreContainer,
-  ScoreEl,
-  restartButton,
-} = window.quizElements;
-
-// ✅ Prevent multiple event listeners
-if (!window.quizEventsAdded) {
-  startButton.addEventListener("click", () => {
-    console.log("Start button clicked");
-    quizApp.startQuiz();
-    console.log("Quiz started");
-  });
-
-  restartButton.addEventListener("click", () => {
-    quizApp.resetState();
-    startScreen.classList.remove("hide");
-    quizContainer.classList.add("hide");
-    scoreContainer.classList.add("hide");
-  });
-
-  window.quizEventsAdded = true; // Mark events as added
-}
-
-function convertApiResponse(apiResponse) {
-  return apiResponse.map((item) => ({
-    question: item.question,
-    answers: [
-      ...item.incorrect_answers.map((answer) => ({
-        text: answer,
-        correct: false,
-      })),
-      { text: item.correct_answer, correct: true },
-    ].sort(() => Math.random() - 0.5), // Shuffle answers
-  }));
-}
-
-function removeStartScreen() {
-  startScreen.classList.add("hide");
-}
-
-function showQuestion() {
-  answerButtons.innerHTML = "";
-  quizContainer.classList.remove("hide");
-
-  if (quizApp.currentQuestionIndex < quizApp.quizData.length) {
-    insertButtons(quizApp.quizData[quizApp.currentQuestionIndex]);
-  } else {
-    showScore();
-  }
-}
-
-function insertButtons(quiz) {
-  question.innerText = quiz.question;
-  questionNumber.innerText = quizApp.currentQuestionIndex + 1;
-  quizApp.correctAnswer = null;
-
-  quiz.answers.forEach((answer) => {
-    const button = document.createElement("button");
-    button.textContent = answer.text;
-    button.classList.add("answer-btn");
-
-    if (answer.correct) {
-      quizApp.correctAnswer = answer.text;
+    function addEventListener() {
+      // startButton.removeEventListener("click", startQuiz);
+      startButton.addEventListener("click", startQuiz);
     }
+    addEventListener();
+  })();
 
-    button.addEventListener("click", selectAnswer);
-    answerButtons.appendChild(button);
-  });
-}
+  function startQuiz() {
+    console.log("Quiz started");
 
-function selectAnswer(event) {
-  const selectedButton = event.target;
-  const isCorrect = selectedButton.textContent === quizApp.correctAnswer;
-
-  document.querySelectorAll(".answer-btn").forEach((btn) => {
-    btn.disabled = true;
-  });
-
-  if (isCorrect) {
-    selectedButton.classList.add("correct");
-    quizApp.score++;
-  } else {
-    selectedButton.classList.add("wrong");
-
-    const wrongButton = document.createElement("button");
-    wrongButton.textContent = `Wrong! The correct answer is: ${quizApp.correctAnswer}`;
-    wrongButton.classList.add("feedback", "wrong");
-    answerButtons.appendChild(wrongButton);
+    quizContainer.classList.remove("hide");
+    startScreen.classList.add("hide");
+    renderQuestion();
   }
 
-  const nextButton = document.createElement("button");
-  nextButton.textContent = "Next";
-  nextButton.classList.add("next-btn");
-  nextButton.addEventListener("click", () => {
-    quizApp.currentQuestionIndex++;
-    quizApp.saveState();
-    showQuestion();
-  });
+  function renderQuestion() {
+    const questionData = QuizData[questionIndex];
+    quizContainer.innerHTML = ` 
+    <div id="quiz-header"> 
+        <h2 id="question">${QuizData[questionIndex].question}</h2> 
+        <div id="progress"> 
+            <span id="question-number">${questionIndex + 1}</span> of 
+            <span id="total-questions">10</span> 
+        </div> 
+    </div> 
 
-  answerButtons.appendChild(nextButton);
+    <div id="answer-buttons" class="btn-grid"></div> 
+
+    <div id="feedback" class="feedback hide"></div> 
+
+    <div class="controls"> 
+        <button id="next-button" class="next-btn hide">Next</button> 
+    </div> 
+  `;
+
+    const answerButtons = document.getElementById("answer-buttons");
+
+    questionData.answers.forEach((answer) => {
+      if (answer.correct) {
+        correct_answer = answer.text;
+      }
+      const button = document.createElement("button");
+      button.classList.add("answer-btn");
+      button.textContent = answer.text;
+      button.addEventListener("click", () => {
+        selectAnswer(answer.text);
+      });
+      answerButtons.appendChild(button);
+    });
+  }
+
+  function selectAnswer(selectedAnswer) {
+    const answerButtons = document.getElementById("answer-buttons");
+    answerButtons.childNodes.forEach((button) => {
+      button.disabled = true;
+      // console.log(answerButtons);
+      if (
+        button.textContent === selectedAnswer &&
+        selectedAnswer === correct_answer
+      ) {
+        button.classList.add("correct");
+        score++;
+      } else if (button.textContent === selectedAnswer) {
+        button.classList.add("wrong");
+      }
+    });
+    const feedback = document.getElementById("feedback");
+    feedback.classList.remove("hide");
+    if (selectedAnswer === correct_answer) {
+      feedback.textContent = "Correct!";
+    } else {
+      feedback.textContent = "Wrong! correct answer is :" + correct_answer;
+    }
+    const nextButton = document.getElementById("next-button");
+    nextButton.classList.remove("hide");
+    nextButton.addEventListener("click", () => {
+      questionIndex++;
+      if (questionIndex < QuizData.length) {
+        renderQuestion();
+      } else {
+        quizContainer.innerHTML = `
+      <div id="score-container" class="score-container ">
+        <h2>Your Score</h2>
+        <p id="score">${score}</p>
+        <button id="restart-button">Restart Quiz</button>
+      </div>
+      `;
+        const restartButton = document.getElementById("restart-button");
+        restartButton.addEventListener("click", () => {
+          questionIndex = 0;
+          score = 0;
+          renderQuestion();
+        });
+      }
+    });
+  }
 }
 
-function showScore() {
-  scoreContainer.classList.remove("hide");
-  quizContainer.classList.add("hide");
-  ScoreEl.innerText = quizApp.score;
-}
-
-// Load quiz state if available
-if (quizApp.loadState()) {
-  removeStartScreen();
-  showQuestion();
-}
+// start();
+document.addEventListener("DOMContentLoaded", start());
