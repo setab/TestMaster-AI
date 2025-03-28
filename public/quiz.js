@@ -1,27 +1,26 @@
 function start() {
   console.log("quize has start");
-
+  fetchQuizData();
   const quizContainer = document.getElementById("quiz-container");
   const startButton = document.getElementById("start-button");
   const startScreen = document.getElementById("start-screen");
-  const questionContainer = document.getElementById("question");
+  // const questionContainer = document.getElementById("question");
 
   let QuizData;
   let questionIndex = 0;
-  let correct_answer = null;
+  let correct_answer = "";
   let score = 0;
 
-  (async () => {
+  async function fetchQuizData() {
     const response = await fetch("http://127.0.0.1:5000/quiz");
     QuizData = await response.json(); // Wait until the JSON is fetched and parsed
     console.log(QuizData); // Log QuizData after it is assigned
 
     function addEventListener() {
-      // startButton.removeEventListener("click", startQuiz);
       startButton.addEventListener("click", startQuiz);
     }
     addEventListener();
-  })();
+  }
 
   function startQuiz() {
     console.log("Quiz started");
@@ -33,6 +32,14 @@ function start() {
 
   function renderQuestion() {
     const questionData = QuizData[questionIndex];
+
+    if (!questionData) {
+      console.log("no question found!!");
+      return;
+    }
+    correct_answer =
+      questionData.answers.find((answer) => answer.correct)?.text || "";
+
     quizContainer.innerHTML = ` 
     <div id="quiz-header"> 
         <h2 id="question">${QuizData[questionIndex].question}</h2> 
@@ -52,11 +59,7 @@ function start() {
   `;
 
     const answerButtons = document.getElementById("answer-buttons");
-
     questionData.answers.forEach((answer) => {
-      if (answer.correct) {
-        correct_answer = answer.text;
-      }
       const button = document.createElement("button");
       button.classList.add("answer-btn");
       button.textContent = answer.text;
@@ -71,7 +74,6 @@ function start() {
     const answerButtons = document.getElementById("answer-buttons");
     answerButtons.childNodes.forEach((button) => {
       button.disabled = true;
-      // console.log(answerButtons);
       if (
         button.textContent === selectedAnswer &&
         selectedAnswer === correct_answer
@@ -114,5 +116,4 @@ function start() {
   }
 }
 
-// start();
 document.addEventListener("DOMContentLoaded", start());

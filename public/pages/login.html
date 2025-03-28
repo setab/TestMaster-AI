@@ -1,11 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Login</title>
-  </head>
-  <body>
-    this is the login page
-  </body>
-</html>
+<!-- pages/login.html -->
+<input type="email" id="login-email" placeholder="Enter Email" />
+<input type="password" id="login-password" placeholder="Enter Password" />
+<button id="login-btn">Login</button>
+
+<script type="module">
+  import { login } from "../firebase/firebase-auth.js";
+
+  document.getElementById("login-btn").addEventListener("click", () => {
+    const email = document.getElementById("login-email").value;
+    const password = document.getElementById("login-password").value;
+    login(email, password);
+  });
+</script>
