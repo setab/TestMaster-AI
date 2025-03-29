@@ -2,13 +2,3 @@
 <input type="email" id="signup-email" placeholder="Enter Email" />
 <input type="password" id="signup-password" placeholder="Enter Password" />
 <button id="signup-btn">Sign Up</button>
-
-<script type="module">
-  import { signUp } from "../firebase/firebase-auth.js";
-
-  document.getElementById("signup-btn").addEventListener("click", () => {
-    const email = document.getElementById("signup-email").value;
-    const password = document.getElementById("signup-password").value;
-    signUp(email, password);
-  });
-</script>
