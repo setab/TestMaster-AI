@@ -2,3 +2,5 @@ script.js
 testFiles
 ./public/test.js
 test.js
+public
+server/node_modules

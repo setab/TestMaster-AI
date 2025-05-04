@@ -1,5 +1,5 @@
 function start() {
-  console.log("quize has start");
+  console.log("quize has started");
   fetchQuizData();
   const quizContainer = document.getElementById("quiz-container");
   const startButton = document.getElementById("start-button");

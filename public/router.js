@@ -32,6 +32,8 @@ function loadPage() {
         script.id = "quiz-script";
 
         document.body.appendChild(script);
+      } else if (path === "#login") {
+        console.log("login page loaded");
       }
     })
     .catch((error) => console.error("Error loading page:", error));

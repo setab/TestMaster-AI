@@ -1,18 +1,11 @@
-G:.
 │   .gitignore
 │   folder_structure.txt
 │   README.md
-│
-├───firebase
-│       firebase-auth.js
-│       firebase-config.js
-│       firebase-db.js
 │
 └───public
     │   firebase.js
     │   index.html
     │   quiz.js
-    │   quiz2.js
     │   quizAPI.js
     │   router.js
     │   styles.css
