@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quiz</title>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Start Screen -->
+      <div id="start-screen" class="start-screen">
+        <h1>Quiz App</h1>
+        <p>Test your knowledge with this quiz!</p>
+        <button id="start-button">Start Quiz</button>
+        <button id="home">GO HOME</button>
+      </div>
+
+      <!-- Quiz Container -->
+      <div id="quiz-container" class="hide">
+        <!-- Answer Buttons -->
+        <div id="answer-buttons" class="btn-grid">
+          <!-- Answer buttons will be added dynamically -->
+        </div>
+
+        <!-- Feedback Area -->
+        <div id="feedback" class="feedback hide"></div>
+
+        <!-- Controls -->
+        <div class="controls">
+          <button id="next-button" class="next-btn hide">Next</button>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="/src/js/quiz.js"></script>
+    <script>
+      document.getElementById("home").addEventListener("click", function () {
+        window.location.href = "/";
+      });
+    </script>
+  </body>
+</html>

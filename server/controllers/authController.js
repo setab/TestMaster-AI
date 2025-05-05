@@ -15,9 +15,7 @@ exports.signup = async (req, res) => {
     if (rows.length > 0) {
       return res.status(400).json({ message: "User already exists" });
     }
-
     const hashedPassword = await bcrypt.hash(password, 10);
-
     await db.execute("INSERT INTO users (email, password) VALUES (?, ?)", [
       email,
       hashedPassword,

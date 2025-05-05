@@ -13,16 +13,22 @@
     <h2>TestMaster AI</h2>
     <button id="login">Login</button>
     <button id="signup">Signup Now</button>
+    <button id="quiz">start quiz</button>
 
     <script>
       // signup button
       document.getElementById("signup").addEventListener("click", function () {
-        window.location.href = "/src/pages/Signup.html";
+        window.location.href = "/api/auth/signup";
       });
 
       // login button
       document.getElementById("login").addEventListener("click", function () {
-        window.location.href = "/src/pages/Login.html";
+        window.location.href = "/api/auth/login";
+      });
+
+      // quiz button
+      document.getElementById("quiz").addEventListener("click", function () {
+        window.location.href = "/api/quiz";
       });
     </script>
   </body>

@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/auth/authRoutes");
+const quizRoutes = require("./routes/quizRoutes"); // Import the quiz routes
 const path = require("path");
 
 const app = express();
@@ -16,6 +17,12 @@ app.get("/", (req, res) => {
 
 // authentication routes
 app.use("/api/auth", authRoutes); // Use the auth routes for authentication
+
+// quiz routes
+app.use("/api/quiz", quizRoutes);
+app.use("/api/quiz", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "src/pages/Quiz.html")); // Serve the quiz.html file
+});
 
 const PORT = process.env.PORT || 3000; // Default to 3000 if PORT is not set in .env
 app.listen(PORT, () => {
