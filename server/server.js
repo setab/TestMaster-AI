@@ -1,30 +1,52 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const authRoutes = require("./routes/auth/authRoutes");
-const quizRoutes = require("./routes/quizRoutes"); // Import the quiz routes
 const path = require("path");
+const cookieParser = require("cookie-parser");
+
+const authRoutes = require("./routes/auth/authRoutes");
+const quizRoutes = require("./routes/quizRoutes");
 
 const app = express();
+
+// Middlewares
 app.use(cors());
-app.use(express.json()); // Middleware to parse JSON bodies
+app.use(express.json());
+app.use(cookieParser());
 
-// homepage route
-app.use(express.static(path.join(__dirname, "../frontend"))); // Serve static files from the public directory
+// 🔍 Log every request
+app.use((req, res, next) => {
+  console.log("➡️ Path:", req.path);
+  next();
+});
+
+// 🌐 Serve static files (like JS, CSS, images)
+app.use(express.static(path.join(__dirname, "../frontend")));
+
+// 🌍 Home page
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend", "index.html")); // Serve the index.html file
+  console.log("🏠 Index page loaded");
+  res.sendFile(path.join(__dirname, "../frontend", "index.html"));
 });
 
-// authentication routes
-app.use("/api/auth", authRoutes); // Use the auth routes for authentication
+// 👤 Auth routes
+app.use("/api/auth", authRoutes);
 
-// quiz routes
+// ❓ Quiz API + UI
 app.use("/api/quiz", quizRoutes);
-app.use("/api/quiz", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend", "src/pages/Quiz.html")); // Serve the quiz.html file
+app.get("/quiz", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "src/pages/Quiz.html"));
 });
 
-const PORT = process.env.PORT || 3000; // Default to 3000 if PORT is not set in .env
+// 📊 Dashboard
+app.get("/dashboard", (req, res) => {
+  res.sendFile(path.join(__dirname, "../frontend", "src/pages/DashBoard.html"));
+});
+
+// logout
+
+// ✅ Start server
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+  console.log(`🚀 Server running at http://localhost:${PORT}`);
 });

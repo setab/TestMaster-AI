@@ -5,13 +5,23 @@ document
   .addEventListener("submit", async (event) => {
     event.preventDefault(); // Prevent the default form submission behavior
 
-    const email = document.getElementById("email").value; // Get the email value from the input field
-    const password = document.getElementById("password").value; // Get the password value from the input field
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-    const response = await login(email, password); // Call the login function with the email and password
-    if (response && response.token) {
-      localStorage.setItem("token", response.token);
-      window.location.href = "/index.html"; // Redirect to the index page if login is successful
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      credentials: "include", // 🔹 Ensures cookies are sent & received
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (response.ok) {
+      console.log("Login successful:", await response.json());
+
+      // ✅ No need to manually store JWT—cookies handle authentication automatically
+      window.location.href = "/dashboard"; // Redirect if login is successful
     } else {
       alert("Login failed. Please check your email and password."); // Show an alert if login fails
     }

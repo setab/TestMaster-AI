@@ -49,14 +49,14 @@ exports.login = async (req, res) => {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    const token = jwt.sign(
-      { id: user.id },
-      process.env.JWT_SECRET || "super_secret_0071",
-      {
-        expiresIn: "1h",
-      }
-    );
-
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1h",
+    });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: false,
+      sameSite: "Lax",
+    });
     console.log("User logged in successfully");
 
     res.status(200).json({
